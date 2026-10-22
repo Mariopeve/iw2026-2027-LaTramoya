@@ -1,0 +1,306 @@
+@startuml ClasesDisenoLaTramoya
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 5
+
+package "Presentation Layer (Vaadin Views)" <<Rectangle>> {
+    class LoginView {
+        - LoginForm loginForm
+        + onLogin(event: LoginEvent): void
+    }
+
+    class RegistrationWizardView {
+        - RegistrationService regService
+        - DocumentStorageService docService
+        + saveDraft(): void
+        + submitRegistration(): void
+        + uploadLegalDoc(event: UploadEvent): void
+    }
+
+    class MunicipalReviewView {
+        - RegistrationService regService
+        - Grid<RegistrationSummaryDto> pendingGrid
+        + approveRegistration(id: Long): void
+        + requestCorrection(id: Long, notes: String): void
+    }
+
+    class JuryScoringView {
+        - JuryScoringService juryService
+        - ScoreSheetForm scoringForm
+        + loadPerformance(id: Long): void
+        + submitScoreSheet(): void
+    }
+
+    class HistoricalArchiveView {
+        - HistoricalArchiveService archiveService
+        - FilterLayout filters
+        - Grid<ArchiveGroupDto> resultsGrid
+        + onFilterChanged(): void
+    }
+}
+
+package "Application Services Layer" <<Rectangle>> {
+    interface SecurityService {
+        + authenticate(credentials: LoginDto): AuthResultDto
+        + registerUser(userDto: UserRegistrationDto): UserProfileDto
+        + getCurrentAuthenticatedUser(): Person
+    }
+
+    interface RegistrationService {
+        + createDraft(dto: RegistrationDraftDto): RegistrationDto
+        + submitRegistration(registrationId: Long, s3DocumentKey: String): RegistrationSummaryDto
+        + reviewRegistration(id: Long, decision: ReviewDecisionDto): void
+        + addRosterMember(regId: Long, member: MemberDto): void
+        + addAuthorship(regId: Long, author: AuthorDto): void
+    }
+
+    interface DocumentStorageService {
+        + generatePresignedUploadUrl(fileName: String, regId: Long): String
+        + confirmDocumentUpload(regId: Long, s3Key: String): void
+    }
+
+    interface DrawSchedulingService {
+        + executePreliminaryDraw(editionId: Long, config: DrawConfigDto): DrawResultDto
+        + reorderPerformance(performanceId: Long, newOrder: Integer): void
+    }
+
+    interface JuryScoringService {
+        + submitJuryScoreSheet(performanceId: Long, dto: ScoreSheetSubmissionDto): ScoreSheetDto
+        + registerPenalty(performanceId: Long, minutesExcess: BigDecimal): void
+    }
+
+    interface ScoreTallyEngineService {
+        + calculatePerformanceTotal(performanceId: Long): BigDecimal
+        + closePhaseAndTally(phaseId: Long): PhaseTallyResultDto
+    }
+
+    interface HistoricalArchiveService {
+        + searchHistoricalArchive(criteria: ArchiveSearchCriteria, page: Pageable): Page<ArchiveGroupDto>
+        + getGroupTrajectory(groupId: Long): GroupTrajectoryDto
+    }
+}
+
+package "Domain Model Layer" <<Rectangle>> {
+    enum Modality {
+        CORO
+        COMPARSA
+        CHIRIGOTA
+        CUARTETO
+    }
+
+    enum EditionStatus {
+        DRAFT
+        REGISTRATION_OPEN
+        REGISTRATION_CLOSED
+        DRAW_COMPLETED
+        IN_COMPETITION
+        FINISHED_SEALED
+    }
+
+    enum RegistrationStatus {
+        DRAFT
+        SUBMITTED
+        UNDER_REVIEW
+        ACCEPTED
+        REJECTED
+        WITHDRAWN
+    }
+
+    enum PhaseType {
+        PRELIMINARES
+        CUARTOS_DE_FINAL
+        SEMIFINALES
+        FINAL
+    }
+
+    enum AwardCategory {
+        FIRST_PRIZE
+        SECOND_PRIZE
+        THIRD_PRIZE
+        FOURTH_PRIZE
+        FIRST_ACCESIT
+    }
+
+    class Person {
+        - Long id
+        - String nationalId
+        - String firstName
+        - String lastName
+        - String email
+        - String passwordHash
+        - String phone
+        - String role
+        + hasRole(roleName: String): Boolean
+    }
+
+    class Edition {
+        - Long id
+        - Integer year
+        - String name
+        - EditionStatus status
+        - LocalDate regStartDate
+        - LocalDate regEndDate
+        - Boolean isSealed
+        + isOpenForRegistration(): Boolean
+        + canExecuteDraw(): Boolean
+    }
+
+    class CarnivalGroup {
+        - Long id
+        - String officialName
+        - Modality modality
+        - String locality
+        - String province
+        - String historicalNotes
+        + getDisplayName(): String
+    }
+
+    class Registration {
+        - Long id
+        - String costumeTheme
+        - RegistrationStatus status
+        - LocalDateTime submissionDate
+        - String s3DocumentKey
+        - String municipalNotes
+        + submit(s3Key: String): void
+        + accept(): void
+        + reject(reason: String): void
+        + isEditable(): Boolean
+    }
+
+    class Authorship {
+        - Long id
+        - String authorRole
+    }
+
+    class RosterMember {
+        - Long id
+        - String memberRole
+        - Integer voiceNumber
+        - Boolean isSubstitute
+    }
+
+    class Phase {
+        - Long id
+        - PhaseType phaseType
+        - Integer orderIndex
+        - Integer maxAdvancingGroups
+        - Boolean scoresCarryOver
+        - Boolean isClosed
+        + closePhase(): void
+    }
+
+    class Session {
+        - Long id
+        - String sessionCode
+        - LocalDateTime sessionDate
+        - String status
+    }
+
+    class Performance {
+        - Long id
+        - Integer orderInSession
+        - String status
+        - LocalTime stageTimeStart
+        - LocalTime stageTimeEnd
+        - BigDecimal penaltyPoints
+        + calculateTotalStageMinutes(): Long
+    }
+
+    class ScoreSheet {
+        - Long id
+        - BigDecimal totalScore
+        - Boolean isSubmitted
+        - LocalDateTime submittedAt
+        + calculateSubtotal(): BigDecimal
+        + lockSheet(): void
+    }
+
+    class ScoreItem {
+        - Long id
+        - String criterion
+        - BigDecimal rawPoints
+    }
+
+    class JuryMember {
+        - Long id
+        - Modality assignedModality
+        - Boolean isPresident
+        + canScore(modality: Modality): Boolean
+    }
+
+    class OfficialVerdict {
+        - Long id
+        - AwardCategory award
+        - BigDecimal finalScore
+        - Integer rankPosition
+    }
+}
+
+package "Data Access Layer (Spring Data JPA)" <<Rectangle>> {
+    interface RegistrationRepository {
+        + findByEditionIdAndStatus(editionId: Long, status: RegistrationStatus): List<Registration>
+        + existsByEditionIdAndGroupId(editionId: Long, groupId: Long): Boolean
+    }
+
+    interface PerformanceRepository {
+        + findBySessionIdOrderByOrderInSession(sessionId: Long): List<Performance>
+    }
+
+    interface ScoreSheetRepository {
+        + findByPerformanceId(perfId: Long): List<ScoreSheet>
+        + existsByPerformanceIdAndJuryMemberId(perfId: Long, juryId: Long): Boolean
+    }
+
+    interface CarnivalGroupRepository {
+        + findTopPerformers(criteria: ArchiveSearchCriteria): Page<CarnivalGroup>
+    }
+}
+
+' Relaciones de Uso: Presentación -> Servicios de Aplicación
+LoginView ..> SecurityService : usa
+RegistrationWizardView ..> RegistrationService : usa
+RegistrationWizardView ..> DocumentStorageService : usa
+MunicipalReviewView ..> RegistrationService : usa
+JuryScoringView ..> JuryScoringService : usa
+HistoricalArchiveView ..> HistoricalArchiveService : usa
+
+' Relaciones de Dependencia: Servicios -> Repositorios
+RegistrationService ..> RegistrationRepository : usa
+DrawSchedulingService ..> PerformanceRepository : usa
+JuryScoringService ..> ScoreSheetRepository : usa
+ScoreTallyEngineService ..> ScoreSheetRepository : usa
+HistoricalArchiveService ..> CarnivalGroupRepository : usa
+
+' Relaciones de Dominio (Asociaciones y Composiciones)
+Edition "1" *-- "many" Phase : fases
+Edition "1" *-- "many" Registration : inscripciones
+Edition "1" *-- "many" JuryMember : jurado oficial
+Edition "1" *-- "many" OfficialVerdict : veredicto final
+
+CarnivalGroup "1" <-- "many" Registration : refiere a
+Registration "1" *-- "many" RosterMember : componentes
+Registration "1" *-- "many" Authorship : autorías
+Registration "1" <-- "many" Performance : orden actuación
+Registration "1" <-- "many" OfficialVerdict : emite palmarés
+
+Person "1" <-- "many" Authorship : autor
+Person "1" <-- "many" RosterMember : componente
+Person "1" <-- "many" JuryMember : jurado
+
+Phase "1" *-- "many" Session : sesiones
+Session "1" *-- "many" Performance : actuaciones
+
+Performance "1" *-- "many" ScoreSheet : actas actuación
+JuryMember "1" <-- "many" ScoreSheet : emitida por
+ScoreSheet "1" *-- "many" ScoreItem : desglose
+
+Edition --> EditionStatus : tiene
+Registration --> RegistrationStatus : tiene
+CarnivalGroup --> Modality : pertenece
+JuryMember --> Modality : asignado a
+Phase --> PhaseType : tipo
+OfficialVerdict --> AwardCategory : categoría premio
+
+@enduml
