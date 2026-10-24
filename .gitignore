@@ -468,3 +468,10 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Vaadin generated frontend
+frontend/generated/
+src/main/frontend/generated/
+node_modules/
+package-lock.json
+pnpm-lock.yaml
