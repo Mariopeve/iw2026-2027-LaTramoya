@@ -1,6 +1,20 @@
 # Lecciones Aprendidas: Gotchas Tecnológicos
 
-Comportamientos inesperados o particularidades del stack tecnológico (Java 21, Spring Boot 3+, Vaadin, PostgreSQL, Obsidian).
+Comportamientos inesperados o particularidades del stack tecnológico (Java 21, Spring Boot 4, Vaadin 25, PostgreSQL, Obsidian).
+
+## 1. Migración a Vaadin 25 y Spring Boot 4: Eliminación de VaadinWebSecurity
+- **Problema:** En Vaadin 25 la clase abstracta `VaadinWebSecurity` ha sido removida completamente.
+- **Solución:** Definir la seguridad declarando un bean `SecurityFilterChain` usando `VaadinSecurityConfigurer.vaadin()`:
+  ```java
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      http.authorizeHttpRequests(auth -> auth.requestMatchers("/h2-console/**").permitAll());
+      http.csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));
+      http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+      http.with(VaadinSecurityConfigurer.vaadin(), configurer -> {});
+      return http.build();
+  }
+  ```
 
 ---
 

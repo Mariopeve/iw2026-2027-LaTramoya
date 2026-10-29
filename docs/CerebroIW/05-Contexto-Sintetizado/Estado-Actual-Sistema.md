@@ -11,7 +11,8 @@
 | :--- | :--- | :--- |
 | **Bóveda Segundo Cerebro (`CerebroIW`)** | ✅ Completado | Estructura de Obsidian creada, `.gitignore` configurado, notas base enlazadas. |
 | **Estructura Base del Repositorio** | 🔄 En Progreso | Rama de trabajo `feat/project-architecture`. Pendiente arranque de stack. |
-| **Backend Spring Boot 3+ (Java 21)** | ⏳ Pendiente | Pendiente de incorporación sin dependencias externas superfluas. |
+| **Backend Spring Boot 4 (Java 21)** | ✅ Completado | Configurado y verificado con Spring Data JPA, Security y H2/PostgreSQL. |
+| **Frontend Vaadin 25** | ✅ Completado | Integrado con `VaadinSecurityConfigurer` y compilación verificada. |
 | **Persistencia PostgreSQL** | ⏳ Pendiente | Esquema de base de datos relacional y perfiles de entorno. |
 | **Frontend Vaadin (Front-Office / Back-Office)** | ⏳ Pendiente | Vistas de consulta histórica y gestión de inscripciones/jurados. |
 | **Motor de Baremación y Actas del COAC** | ⏳ Pendiente | Algoritmos de cálculo de puntuaciones y sellado de actas. |

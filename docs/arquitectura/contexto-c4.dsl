@@ -26,7 +26,7 @@ workspace "La Tramoya - Plataforma COAC y Archivo Histórico" "Arquitectura del 
             
             database = container "Base de Datos Relacional" "Almacena ediciones, agrupaciones, inscripciones, fases, sesiones, actuaciones, actas y desglose de puntuaciones." "PostgreSQL 16" "Database"
 
-            backendApp = container "Aplicación Monolítica Modular" "Implementa la lógica del concurso, motor de sorteo, cómputo de puntuaciones, control de sesiones y orquestación transaccional." "Spring Boot 3.x, Java 21 LTS, Spring Security" "BackendApp" {
+            backendApp = container "Aplicación Monolítica Modular" "Implementa la lógica del concurso, motor de sorteo, cómputo de puntuaciones, control de sesiones y orquestación transaccional." "Spring Boot 4.x, Java 21 LTS, Spring Security" "BackendApp" {
                 
                 // --- C4 NIVEL 3: COMPONENTES DEL BACKEND (HITOS 1 AL 20) ---
                 securityAuthSvc = component "Security & Auth Service" "Gestiona login, registro, sesiones HTTP y protección RBAC (Hitos 1, 2, 3)." "Spring Security + BCrypt"

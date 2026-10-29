@@ -78,6 +78,36 @@ Strictly adhere to the following package layout under `src/main/java/com/aytocad
 7. `config/`: Spring configurations, Security filter chains, Vaadin settings, AWS client beans.
 8. `exception/`: Domain exceptions (`RegistrationClosedException`, `InvalidJuryScoreException`) and handlers (`@ControllerAdvice`).
 
+### Strict Adherence to Architecture & Design Models (`/docs`)
+Before implementing, modifying domain entities, defining API contracts, or structuring business logic, the agent MUST inspect and strictly align with the preexisting models in `/docs`:
+- **Data & Class Models:** Consult `/docs/diseno/modelo-datos.md` and UML class diagrams in `/docs/diseno/clases-diseno.puml`. All JPA entities, attributes, constraints, and relationships in code must correspond exactly to these designs.
+- **Interactions & Execution Flows:** Follow the dynamics documented in `/docs/diseno/diagramas-secuencia.md`.
+- **API Contracts & DTOs:** Build controllers and request/response payloads according to specifications in `/docs/diseno/contratos/`.
+- **System Architecture & Context Boundaries:** Keep components aligned with `/docs/arquitectura/contexto.md`, the C4 model in `/docs/arquitectura/contexto-c4.dsl`, and architectural decision records in `/docs/arquitectura/decisiones/`.
+- **Zero Divergence Rule:** Autonomous creation or alteration of models, entity fields, relationships, or endpoints without prior backing documentation in `/docs` is strictly forbidden.
+
+---
+
+### Spring Component Labeling & Scopes
+All Spring components and Vaadin views must be labeled according to their precise role and lifecycle scope:
+
+#### Stereotype Annotations
+- @Component: Bean genérico (LogNotificationSender)
+- @Service: Lógica de negocio (BookingService)
+- @Repository: Acceso a datos; traduce sus excepciones (InMemoryBookingRepository)
+- @Controller: Entrada web de Spring MVC (BookingController)
+- @Route: Vista de Vaadin para una URL; Spring la crea (BookingView)
+
+#### Bean Scopes (@Scope)
+@Scope decide cuántas instancias del bean crea el contenedor:
+
+| Ámbito | Instancias | Uso típico | Ejemplo en reservas |
+| :--- | :--- | :--- | :--- |
+| **singleton** | Una para toda la aplicación (por defecto) | Servicios y repositorios | BookingService, InMemoryBookingRepository |
+| **prototype** | Una nueva cada vez que se pide | Objetos con estado propio | BookingReport, un informe que se rellena paso a paso |
+| **request** | Una por petición HTTP | Datos de la petición | ClientInfo, la IP y el navegador de quien pide |
+| **session** | Una por sesión de usuario | Carrito, preferencias | BookingCart, las pistas que el socio elige antes de confirmar |
+
 ---
 
 ## 4. Dependency Management & Operational Boundaries
@@ -207,6 +237,7 @@ The agent must produce human-grade, production-ready code and avoid robotic AI f
 2. **No Placeholder Stubs or Lazy Implementations:** Never produce code with `// TODO: implement later`, truncated logic, or dummy mocked returns when full implementations are requested. Deliver complete, operable methods.
 3. **No Decorative Robotic Text:** In user interfaces and documentation, avoid generic corporate AI buzzwords (e.g., "potenciar", "revolucionar", "solución integral inteligente", "aprovechar sinergias"). Use real municipal and carnivalesque terminology (*palmarés*, *tipo*, *sesión de preliminares*, *nómina*, *acta ciega*).
 4. **Lean and Concrete Architecture:** Avoid unnecessary abstraction layers, over-engineered generic wrapper classes, or excessive boilerplate that serves no immediate business requirement. Keep code SOLID, idiomatic to Spring Boot 3+ and Vaadin, and straightforward to maintain.
+5. **Absolute Prohibition of Emojis:** The use of emojis is strictly forbidden across all outputs without exception: source code, comments, commit messages, technical documentation, CerebroIW vault notes, and conversational responses to the developers. Maintain a sober, formal, and strictly technical communication style at all times.
 
 ---
 
@@ -238,3 +269,4 @@ Before declaring any backlog task complete, the agent MUST:
    - Brain notes created/updated in `CerebroIW`.
    - Verification execution results (tests, linting).
    - Recommended next steps or manual verification items for the team.
+8. Validate complete consistency and structural parity of all implemented classes, entities, and workflows against the design models in `/docs/diseno/` and `/docs/arquitectura/`
