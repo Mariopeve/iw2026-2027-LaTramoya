@@ -140,7 +140,77 @@ Strictly adhere to the following package layout under `src/main/java/com/aytocad
 
 ---
 
-## 8. Testing Strategy & Verification Script
+
+## 8. Obsidian Second Brain Protocol (`CerebroIW`)
+
+The agent maintains and expands an autonomous internal memory vault in `docs/CerebroIW/` to store project context, architectural decisions, and incremental lessons learned:
+
+1. **Vault Scope & Structure:**
+   - Active work memory is confined strictly to `docs/CerebroIW/`.
+   - Never modify or move foundational architecture specs outside this folder (e.g., `/docs/arquitectura/`, `/docs/diseno/`) unless explicitly instructed.
+   - Use standard lightweight Markdown (`.md`) without bloat or inline heavy assets to maintain minimal file size and repository performance.
+
+2. **Language Requirement:**
+   - All notes, decisions, logs, and documentation generated inside `CerebroIW` MUST be written in clear, concise **Spanish**.
+
+3. **Incremental Brain Population & Interlinking:**
+   - **Cross-linking:** Always use Obsidian bidirectional links (`[[NombreDeNota]]`) when mentioning concepts, entities, or related decisions to build an interconnected knowledge graph.
+   - **Autonomous Lifecycle at Task Completion:** Upon finishing any technical implementation or bug fix (as part of the Definition of Done):
+     - **Decisions (`02-Decisiones-Tecnicas/`):** Log non-obvious architecture or design choices as an ADR note.
+     - **Patterns & Solutions (`03-Patrones-y-Soluciones/`):** Document reusable Vaadin or Spring Boot patterns implemented.
+     - **Lessons Learned (`04-Lecciones-Aprendidas/`):** Record resolved edge cases, pitfalls, or library gotchas.
+     - **Session Log (`01-Bitacora-Sesiones/`):** Append a brief entry summarizing changes, modified files, and pending items.
+
+### Vault Structure & Scope
+```text
+docs/contexto/CerebroIW/
+├── 00-Inbox/                 # Temporary ideas, quick notes, and active draft thoughts
+├── 01-Bitacora-Sesiones/     # Chronological logs of work sessions and pending tasks
+├── 02-Decisiones-Tecnicas/   # Architecture Decision Records (ADRs) and architectural debates
+├── 03-Patrones-y-Soluciones/ # Reusable code snippets (Vaadin components, Spring tricks, SQL)
+├── 04-Lecciones-Aprendidas/  # Solved bugs, gotchas, framework oddities, edge cases
+└── 05-Contexto-Sintetizado/  # High-level maps of content (MOC) and system state snapshots
+```
+
+---
+
+## 9. Design System, Color Palette & Typography Guidelines
+
+To avoid looking like a generic Bootstrap/Material boilerplate, all Vaadin views, components, and CSS/Lumo overrides must strictly apply the following design tokens:
+
+### Color Palette (CSS Custom Properties)
+```css
+:host, :root {
+  --text: #29221e;
+  --background: #f9f6f0;
+  --primary: #805b42;
+  --secondary: #2a2422;
+  --accent: #93694d;
+}
+```
+
+### Typography Hierarchy
+Apply these font families to convey an archival, prestigious, and human feel matching the Gran Teatro Falla and historical Cádiz:
+- **Titles & Headings (`h1`, `h2`):** `'Cormorant Garamond'`, serif (elegant, classical, editorial feel).
+- **Subtitles & Badges (`h3`, `h4`, captions, modal titles):** `'Cinzel'`, serif (monumental, formal typography).
+- **Body, Inputs & Grids (Default text, forms, tables):** `'Lato'`, sans-serif (high readability on screens).
+
+Ensure all Vaadin views incorporate these fonts and apply color tokens meaningfully (e.g., subtle cream backgrounds, rich dark coffee text, warm terracotta and bronze accents for primary actions and active states).
+
+---
+
+## 10. Strict Anti-AI Slop & Human-Grade Code Directives
+
+The agent must produce human-grade, production-ready code and avoid robotic AI filler patterns:
+
+1. **No Redundant Over-Explanations:** Do not generate obvious inline comments stating what code does (e.g., forbidden: `// constructor`, `// set background color`, `// getter de name`). Only document business invariants, calculation rationales, or non-obvious constraints in Spanish.
+2. **No Placeholder Stubs or Lazy Implementations:** Never produce code with `// TODO: implement later`, truncated logic, or dummy mocked returns when full implementations are requested. Deliver complete, operable methods.
+3. **No Decorative Robotic Text:** In user interfaces and documentation, avoid generic corporate AI buzzwords (e.g., "potenciar", "revolucionar", "solución integral inteligente", "aprovechar sinergias"). Use real municipal and carnivalesque terminology (*palmarés*, *tipo*, *sesión de preliminares*, *nómina*, *acta ciega*).
+4. **Lean and Concrete Architecture:** Avoid unnecessary abstraction layers, over-engineered generic wrapper classes, or excessive boilerplate that serves no immediate business requirement. Keep code SOLID, idiomatic to Spring Boot 3+ and Vaadin, and straightforward to maintain.
+
+---
+
+## 11. Testing Strategy & Verification Script
 
 Apply testing across the entire pyramid before proposing changes:
 
@@ -153,14 +223,18 @@ The project contains an automated verification script (e.g., `./scripts/verify.s
 
 ---
 
-## 9. Definition of Done (DoD)
+## 12. Definition of Done (DoD)
 
 Before declaring any backlog task complete, the agent MUST:
 1. Verify that all newly created code resides in the proper layered package under `com.aytocadiz.carnaval.*`.
 2. Confirm that comments, documentation, and Javadoc are written in Spanish explaining the *why* (especially for scoring, jury rules, or archival indexing).
-3. Execute the automated verification script and guarantee **0 compilation errors, 0 failed tests, and 0 linter violations**.
-4. Present a final report in **Spanish** detailing:
+3. Confirm that the UI strictly adheres to the custom color palette (`#29221e`, `#f9f6f0`, `#805b42`, `#2a2422`, `#93694d`) and typography (`Cormorant Garamond`, `Cinzel`, `Lato`).
+4. Ensure the codebase is clean, complete, and free of AI slop, redundant filler comments, and unimplemented placeholders.
+5. Update or link the relevant Obsidian notes inside `docs/contexto/CerebroIW/` (sessions, ADRs, patterns, lessons) in Spanish using `[[...]]`.
+6. Execute the automated verification script and guarantee **0 compilation errors, 0 failed tests, and 0 linter violations**.
+7. Present a final report in **Spanish** detailing:
    - Functional and architectural changes implemented.
    - Files created or updated.
+   - Brain notes created/updated in `CerebroIW`.
    - Verification execution results (tests, linting).
    - Recommended next steps or manual verification items for the team.
