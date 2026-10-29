@@ -1,6 +1,6 @@
 # Patrones y Soluciones: Spring Backend
 
-Guía de patrones de diseño, transaccionalidad, inyección de dependencias y seguridad en Spring Boot 3+ (Java 21).
+Guía de patrones de diseño, transaccionalidad, inyección de dependencias y seguridad en Spring Boot 4 (Java 21).
 
 ---
 

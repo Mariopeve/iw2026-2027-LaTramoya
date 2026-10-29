@@ -22,7 +22,7 @@ Los requerimientos fundamentales imponen:
 
 Se decide adoptar un **Monolito Modular** estructurado en:
 - **Capa de Presentación Web:** **Vaadin Flow (Java 21 / HTML5)**. Permite construir tanto el Front-Office accesible como las vistas ricas del Back-Office (grids, formularios multipaso de inscripción, planillas en vivo del jurado) de forma tipada, segura y unificada en Java.
-- **Capa de Aplicación y Dominio:** **Spring Boot 3.x / Java 21 LTS**, organizado en módulos de servicio cohesivos por hito/dominio (inscripciones, jurado, archivo histórico, etc.).
+- **Capa de Aplicación y Dominio:** **Spring Boot 4.x / Java 21 LTS**, organizado en módulos de servicio cohesivos por hito/dominio (inscripciones, jurado, archivo histórico, etc.).
 - **Capa de Persistencia:** **Spring Data JPA / Hibernate con PostgreSQL 16**, con soporte de migraciones de esquema mediante **Flyway**.
 - **Almacenamiento de Binarios:** **AWS S3** desacoplado mediante URLs prefirmadas para documentación PDF sensible, evitando saturar la base de datos relacional.
 

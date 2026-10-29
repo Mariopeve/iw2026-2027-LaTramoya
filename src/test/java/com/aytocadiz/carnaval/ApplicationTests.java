@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * Prueba de carga del contexto Spring Boot.
+ * Prueba de carga del contexto Spring Boot y Vaadin.
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Tag("integration")
 class ApplicationTests {
 
